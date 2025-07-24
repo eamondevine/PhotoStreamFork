@@ -13,8 +13,10 @@ export default async function Home() {
   console.log("resources", resources);
 
   return (
-    <div className="h-full mt-6">
-      <MediaGallery resources={resources} />
-    </div>
+    <>
+      <div className="h-full mt-6">
+        <MediaGallery resources={resources} />
+      </div>
+    </>
   );
 }
