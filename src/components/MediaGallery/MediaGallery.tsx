@@ -119,7 +119,9 @@ const MediaGallery = ({ resources }: MediaGalleryProps) => {
       <Container>
         <form>
           {Array.isArray(resources) && (
-            <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mb-12">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mb-12">
+              {" "}
+              {/* grid fixed for 1 col */}
               {resources.map((resource) => {
                 const isChecked = selected.includes(resource.public_id);
 
