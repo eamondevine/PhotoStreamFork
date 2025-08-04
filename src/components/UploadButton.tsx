@@ -13,8 +13,7 @@ import { CloudinaryResource } from "@/types/cloudinary";
 const UploadButton = () => {
   const { addResources } = useResources();
   function handleOnSuccess(results: CloudinaryUploadWidgetResults) {
-    addResources([results.info as CloudinaryResource]);
-    console.log("results", results);
+    addResources([results.info as CloudinaryResource]); // merging results client side
   }
   return (
     <CldUploadWidget

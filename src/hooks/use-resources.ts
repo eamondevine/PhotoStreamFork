@@ -15,7 +15,19 @@ export function useResources(options?: UseResources) {
     },
     initialData: options?.initialResources,
   });
-  function addResources(results: Array<CloudinaryResource>) {}
+  function addResources(results: Array<CloudinaryResource>) {
+    // this function is merging new results on client with old
+    queryClient.setQueryData(
+      ["resources"],
+      (old: Array<CloudinaryResource>) => {
+        return [...results, ...old];
+      }
+    );
+    queryClient.invalidateQueries({
+      // GET request checking server side - this is called optimistic updates
+      queryKey: ["resources"],
+    });
+  }
   return {
     resources,
     addResources,
