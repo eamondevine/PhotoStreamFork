@@ -15,7 +15,7 @@ export function useResources(options?: UseResources) {
     },
     initialData: options?.initialResources,
   });
-  function addResources(results Array<CloudinaryResource>) {}
+  function addResources(results: Array<CloudinaryResource>) {}
   return {
     resources,
     addResources,
