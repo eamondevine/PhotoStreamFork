@@ -3,5 +3,5 @@ export interface CloudinaryResource {
   width: number;
   secure_url: string;
   public_id: string;
-  display_name: string;
+  display_name?: string;
 }

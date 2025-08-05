@@ -9,13 +9,13 @@ cloudinary.config({
 });
 
 export default async function Home() {
-  const { resources } = await cloudinary.api.resources(); // when fetching resources_by_tag getting error
+  const { resources } = await cloudinary.api.resources_by_tag("media"); // when fetching resources_by_tag getting error
   console.log("resources", resources);
 
   return (
     <>
       <div className="h-full mt-6">
-        <MediaGallery resources={resources} />
+        <MediaGallery resources={resources} tag={"media"} />
       </div>
     </>
   );
