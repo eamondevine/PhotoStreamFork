@@ -22,14 +22,17 @@ export function useResources(options?: UseResources) {
   function addResources(results: Array<CloudinaryResource>) {
     // this function is merging new results on client with old
     queryClient.setQueryData(
-      ["resources"],
+      ["resources", String(process.env.NEXT_PUBLIC_CLOUDINARY_LIBRARY_TAG)],
       (old: Array<CloudinaryResource>) => {
         return [...results, ...old];
       }
     );
     queryClient.invalidateQueries({
       // GET request checking server side - this is called optimistic updates
-      queryKey: ["resources"],
+      queryKey: [
+        "resources",
+        String(process.env.NEXT_PUBLIC_CLOUDINARY_LIBRARY_TAG),
+      ],
     });
   }
   return {

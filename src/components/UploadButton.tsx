@@ -20,7 +20,10 @@ const UploadButton = () => {
   return (
     <CldUploadWidget
       signatureEndpoint="/api/sign-cloudinary-params"
-      options={{ autoMinimize: true, tags: ["media"] }} // gives us the auto tag of 'media'
+      options={{
+        autoMinimize: true,
+        tags: [String(process.env.NEXT_PUBLIC_CLOUDINARY_LIBRARY_TAG)],
+      }} // gives us the auto tag of 'media'
       onSuccess={handleOnSuccess}
     >
       {({ open }) => {
