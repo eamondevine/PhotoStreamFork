@@ -9,7 +9,7 @@ cloudinary.config({
 });
 
 export default async function Home() {
-  const { resources } = await cloudinary.api.resources();
+  const { resources } = await cloudinary.api.resources(); // when fetching resources_by_tag getting error
   console.log("resources", resources);
 
   return (

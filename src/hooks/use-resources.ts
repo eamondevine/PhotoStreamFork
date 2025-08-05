@@ -3,17 +3,21 @@ import { CloudinaryResource } from "@/types/cloudinary";
 
 interface UseResources {
   initialResources?: Array<CloudinaryResource>;
+  disableFetch?: boolean;
+  tag?: string;
 }
 
 export function useResources(options?: UseResources) {
   const queryClient = useQueryClient();
+  const { disableFetch = false } = options || {};
   const { data: resources } = useQuery({
-    queryKey: ["resources"],
+    queryKey: ["resources", options?.tag],
     queryFn: async () => {
       const { data } = await fetch("/api/resources").then((r) => r.json());
       return data;
     },
     initialData: options?.initialResources,
+    enabled: !disableFetch,
   });
   function addResources(results: Array<CloudinaryResource>) {
     // this function is merging new results on client with old
