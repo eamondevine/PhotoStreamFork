@@ -41,7 +41,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { CloudinaryResource } from "@/types/cloudinary";
-import { CldImage } from "next-cloudinary";
+import { CldImage, CldImageProps } from "next-cloudinary";
 
 interface Deletion {
   state: string;
@@ -56,6 +56,22 @@ const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
   const [filterSheetIsOpen, setFilterSheetIsOpen] = useState(false);
   const [infoSheetIsOpen, setInfoSheetIsOpen] = useState(false);
   const [deletion, setDeletion] = useState<Deletion>();
+
+  // IF Amy and I ever want to use Cloudinary's CldImageProps to enhance photos, here they are. But they cost $$$
+
+  /*   const [enhancements, setEnhancements] = useState<string>(); // enhancements state set by edit panel buttons
+
+  type Transformations = Omit<CldImageProps, "src" | "alt">; // passing in all other props needed
+
+  const transformations: Transformations = {};
+
+  if (enhancements === "restore") {
+    transformations.restore = true;
+  } else if (enhancements === "improve") {
+    transformations.improve = true;
+  } else if (enhancements === "remove-background") {
+    transformations.removeBackground = true;
+  } */
 
   // Canvas sizing based on the image dimensions. The tricky thing about
   // showing a single image in a space like this in a responsive way is trying
@@ -178,21 +194,56 @@ const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
             </TabsList>
             <TabsContent value="enhance">
               <SheetHeader className="my-4">
-                <SheetTitle className="text-zinc-400 text-sm font-semibold">
-                  Enhancements
+                <SheetTitle className="text-zinc-400 text-md font-semibold">
+                  Enhancements / 增強
                 </SheetTitle>
               </SheetHeader>
-              <ul className="grid gap-2">
+              <div>
+                <h1 className="text-[2rem]">太貴了！</h1>
+                <p className="text-[1.4rem]"> 晚點可以跟我講怎麽用😉</p>
+              </div>
+              {/* <ul className="grid gap-2">
                 <li>
                   <Button
                     variant="ghost"
                     className={`text-left justify-start w-full h-14 border-4 bg-zinc-700 border-white`}
+                    onClick={() => setEnhancements(undefined)}
                   >
                     <Ban className="w-5 h-5 mr-3" />
                     <span className="text-[1.01rem]">None</span>
                   </Button>
                 </li>
-              </ul>
+                <li>
+                  <Button
+                    variant="ghost"
+                    className={`text-left justify-start w-full h-14 border-4 bg-zinc-700 border-white`}
+                    onClick={() => setEnhancements("restore")}
+                  >
+                    <Ban className="w-5 h-5 mr-3" />
+                    <span className="text-[1.01rem]">Restore</span>
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    variant="ghost"
+                    className={`text-left justify-start w-full h-14 border-4 bg-zinc-700 border-white`}
+                    onClick={() => setEnhancements("improve")}
+                  >
+                    <Ban className="w-5 h-5 mr-3" />
+                    <span className="text-[1.01rem]">Improve</span>
+                  </Button>
+                </li>
+                <li>
+                  <Button
+                    variant="ghost"
+                    className={`text-left justify-start w-full h-14 border-4 bg-zinc-700 border-white`}
+                    onClick={() => setEnhancements("remove-background")}
+                  >
+                    <Ban className="w-5 h-5 mr-3" />
+                    <span className="text-[1.01rem]">Remove Background</span>
+                  </Button>
+                </li>
+              </ul> */}
             </TabsContent>
             <TabsContent value="crop">
               <SheetHeader className="my-4">
@@ -370,6 +421,7 @@ const MediaViewer = ({ resource }: { resource: CloudinaryResource }) => {
           src={resource.public_id}
           alt={`Image ${resource.display_name}`}
           style={imgStyles}
+          /* {...transformations} */
         />
       </div>
     </div>
