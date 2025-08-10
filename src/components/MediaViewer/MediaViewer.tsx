@@ -41,7 +41,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { CloudinaryResource } from "@/types/cloudinary";
-import { CldImage, CldImageProps } from "next-cloudinary";
+import { CldImage } from "next-cloudinary"; // if you wanna use the enhancements below, import CldImageProps
 
 interface Deletion {
   state: string;

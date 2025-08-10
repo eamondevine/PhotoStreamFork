@@ -173,7 +173,7 @@ const MediaGallery = ({
                         className={`block cursor-pointer border-8 transition-[border] ${
                           isChecked ? "border-blue-500" : "border-white"
                         }`}
-                        href={`/resources/${resource.asset_id}`}
+                        href={`/resources/${resource.public_id}`}
                       >
                         <CldImage
                           width={resource.width}
