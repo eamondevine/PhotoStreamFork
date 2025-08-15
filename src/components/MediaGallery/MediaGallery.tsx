@@ -26,21 +26,24 @@ import {
 import { CloudinaryResource } from "@/types/cloudinary";
 
 import { useResources } from "@/hooks/use-resources";
+import { Test } from "@/app/models/TestSchema";
 
 interface MediaGalleryProps {
   resources: Array<CloudinaryResource>;
   tag?: string;
+  testData?: Test[]; //This Test is the interface from the TestSchema
 }
 
 const MediaGallery = ({
   resources: initialResources,
   tag,
+  testData,
 }: MediaGalleryProps) => {
   const { resources } = useResources({
     initialResources,
     tag,
   });
-  console.log("resources", resources);
+  console.log("testData", testData);
 
   const [selected, setSelected] = useState<Array<string>>([]);
   const [creation, setCreation] = useState();
@@ -65,6 +68,13 @@ const MediaGallery = ({
 
   return (
     <>
+      <div className="text-[3rem] flex flex-col items-center">
+        <p>TEST</p>
+        {testData?.map((item) => (
+          <p key={item._id}>{item.age}</p>
+        ))}
+        <p>This should be the end of the mapped data</p>
+      </div>
       {/** Popup modal used to preview and confirm new creations */}
 
       <Dialog open={!!creation} onOpenChange={handleOnCreationOpenChange}>
@@ -121,7 +131,6 @@ const MediaGallery = ({
       )}
 
       {/** Gallery */}
-
       <Container>
         <form>
           {Array.isArray(resources) && (

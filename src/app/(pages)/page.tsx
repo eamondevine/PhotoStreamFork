@@ -1,6 +1,8 @@
 import MediaGallery from "@/components/MediaGallery";
+import dbConnect from "@/lib/dbconnect";
 
 import { v2 as cloudinary } from "cloudinary";
+import TestModel from "../models/TestSchema";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -9,6 +11,9 @@ cloudinary.config({
 });
 
 export default async function Home() {
+  await dbConnect();
+  const testData = await TestModel.find({});
+  const stringifiedTestData = JSON.parse(JSON.stringify(testData));
   const { resources } = await cloudinary.api.resources_by_tag(
     String(process.env.NEXT_PUBLIC_CLOUDINARY_LIBRARY_TAG)
   );
@@ -20,6 +25,7 @@ export default async function Home() {
         <MediaGallery
           resources={resources}
           tag={String(process.env.NEXT_PUBLIC_CLOUDINARY_LIBRARY_TAG)}
+          testData={stringifiedTestData}
         />
       </div>
     </>
