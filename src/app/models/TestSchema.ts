@@ -42,6 +42,6 @@ const TestSchema = new mongoose.Schema<Test>(
 );
 
 const TestModel =
-  mongoose.models.Test || mongoose.model<Test>("TestData", TestSchema);
+  mongoose.models.TestData || mongoose.model<Test>("TestData", TestSchema);
 
 export default TestModel;

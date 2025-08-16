@@ -27,6 +27,7 @@ import { CloudinaryResource } from "@/types/cloudinary";
 
 import { useResources } from "@/hooks/use-resources";
 import { Test } from "@/app/models/TestSchema";
+import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 interface MediaGalleryProps {
   resources: Array<CloudinaryResource>;
@@ -65,6 +66,18 @@ const MediaGallery = ({
       setCreation(undefined);
     }
   }
+
+  if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+    throw new Error("Missing AWS credentials in environment variables");
+  }
+
+  const client = new S3Client({
+    region: "ap-southeast-1",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+  });
 
   return (
     <>
