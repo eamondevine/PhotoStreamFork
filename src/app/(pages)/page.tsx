@@ -4,6 +4,7 @@ import Image from "next/image";
 import { v2 as cloudinary } from "cloudinary";
 import TestModel from "../models/TestSchema";
 import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
+import PhotoMap from "@/components/Maps/PhotoMap";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,

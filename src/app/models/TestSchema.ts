@@ -1,47 +1,46 @@
 import mongoose from "mongoose";
 
 export interface Test extends mongoose.Document {
-  _id: string;
-  name?: string;
-  owner_name?: string;
-  species?: string;
-  age?: number;
+  url: string;
+  gps?: {
+    lat: number;
+    lng: number;
+  };
+  note?: string;
+  title?: string;
+  tags?: string[];
 }
 
-/* PetSchema will correspond to a collection in your MongoDB database. */
 const TestSchema = new mongoose.Schema<Test>(
   {
-    name: {
-      /* The name of this pet */
-
+    url: {
       type: String,
-      required: [true, "Please provide a name for this pet."],
-      maxlength: [60, "Name cannot be more than 60 characters"],
+      required: [true, "Must have associated url."],
     },
-    owner_name: {
-      /* The owner of this pet */
-
+    gps: {
+      lat: {
+        type: Number,
+      },
+      lng: {
+        type: Number,
+      },
+    },
+    note: {
       type: String,
-      required: [true, "Please provide the pet owner's name"],
-      maxlength: [60, "Owner's Name cannot be more than 60 characters"],
     },
-    species: {
-      /* The species of your pet */
-
+    title: {
       type: String,
-      required: [true, "Please specify the species of your pet."],
-      maxlength: [40, "Species specified cannot be more than 40 characters"],
+      maxlength: [40, "Title cannot be more than 40 characters"],
     },
-    age: {
-      /* Pet's age, if applicable */
-
-      type: Number,
+    tags: {
+      type: [String],
+      maxlength: [10, "Tag cannot be more than 10 characters"],
     },
   },
-  { collection: "Pets" }
+  { collection: "Photos" }
 );
 
 const TestModel =
-  mongoose.models.TestData || mongoose.model<Test>("TestData", TestSchema);
+  mongoose.models.TestPhotos || mongoose.model<Test>("TestPhotos", TestSchema);
 
 export default TestModel;
