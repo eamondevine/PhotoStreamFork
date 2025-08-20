@@ -27,17 +27,20 @@ import { CloudinaryResource } from "@/types/cloudinary";
 
 import { useResources } from "@/hooks/use-resources";
 import { Test } from "@/app/models/TestSchema"; //nothing atm
+import Image from "next/image";
 
 interface MediaGalleryProps {
   resources: Array<CloudinaryResource>;
   tag?: string;
   testData?: Test[]; //This Test is the interface from the TestSchema
+  awsResponse?: string[];
 }
 
 const MediaGallery = ({
   resources: initialResources,
   tag,
   testData,
+  awsResponse,
 }: MediaGalleryProps) => {
   const { resources } = useResources({
     initialResources,
@@ -68,6 +71,18 @@ const MediaGallery = ({
 
   return (
     <>
+      <div className="flex flex-col items-center justify-center">
+        {awsResponse?.map((url) => (
+          <Image
+            key={url}
+            src={url}
+            alt="Image"
+            width={300}
+            height={200}
+            className="mb-4"
+          />
+        ))}
+      </div>
       <div className="text-[3rem] flex flex-col items-center">
         <p>TEST</p>
         <p>This should be the end of the mapped data</p>

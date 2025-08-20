@@ -1,10 +1,13 @@
 import MediaGallery from "@/components/MediaGallery";
 import dbConnect from "@/lib/dbconnect";
-import Image from "next/image";
 import { v2 as cloudinary } from "cloudinary";
 import TestModel from "../models/TestSchema";
-import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
-import PhotoMap from "@/components/Maps/PhotoMap";
+import {
+  S3Client,
+  ListObjectsV2Command,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -35,36 +38,34 @@ export default async function Home() {
   });
 
   // Fetch all images from S3
-  const command = new ListObjectsV2Command({
+  const listCommand = new ListObjectsV2Command({
     Bucket: "eamon-test-bucket-1",
     Prefix: "Screenshots 1/", // optional: folder path
   });
-  const response = await s3.send(command);
+  const response = await s3.send(listCommand);
 
-  // Generate URLs for images
-  const s3Images = response.Contents?.map((obj) => {
+  const signedUrls = await Promise.all(
+    response.Contents?.map(async (obj) => {
+      const getCommand = new GetObjectCommand({
+        Bucket: "eamon-test-bucket-1",
+        Key: obj.Key!,
+      });
+      return await getSignedUrl(s3, getCommand, { expiresIn: 300 }); // 5 min
+    }) || []
+  );
+
+  // Generate URLs for images, but these are unsigned (can grab these from ListObjectsV2Command)
+  /* const s3Images = response.Contents?.map((obj) => {
     return `https://eamon-test-bucket-1.s3.ap-southeast-1.amazonaws.com/${obj.Key}`;
-  });
+  }); */
 
   return (
     <div className="h-full mt-6">
-      <div className="flex flex-col items-center justify-center">
-        {s3Images?.map((url) => (
-          <Image
-            key={url}
-            src={url}
-            alt="Image"
-            width={300}
-            height={200}
-            className="mb-4"
-          />
-        ))}
-      </div>
-
       <MediaGallery
         resources={resources}
         tag={String(process.env.NEXT_PUBLIC_CLOUDINARY_LIBRARY_TAG)}
         testData={stringifiedTestData}
+        awsResponse={signedUrls}
       />
     </div>
   );
