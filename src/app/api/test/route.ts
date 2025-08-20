@@ -1,28 +1,41 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import dbConnect from "@/lib/dbconnect";
-import TestModel from "@/app/models/TestSchema";
+import Test from "@/app/models/TestSchema";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  await dbConnect();
+const s3Client = new S3Client({
+  region: "ap-southeast-1",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
 
-  if (req.method === "GET") {
-    try {
-      const getTestData = await TestModel.find({}); //find all objects in db, collection is specified in the TestSchema file
-      res.status(200).json({ success: true, data: getTestData });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ success: false, error: "Server failed to fetch the data" });
-    }
-  } else {
-    // Proper response for unsupported HTTP methods
-    res.setHeader("Allow", ["GET"]); // tells the client which methods are allowed
-    res
-      .status(405)
-      .json({ success: false, error: `Method ${req.method} not allowed` });
+export async function GET(req: NextRequest) {
+  try {
+    await dbConnect();
+    const metadata = await Test.find().lean();
+
+    const withUrls = await Promise.all(
+      metadata.map(async (item) => {
+        const command = new GetObjectCommand({
+          Bucket: "eamon-test-bucket-1",
+          Key: item.key,
+        });
+        console.log("S3 Key:", item.key);
+        const signedUrl = await getSignedUrl(s3Client, command, {
+          expiresIn: 3600,
+        });
+        return { ...item, signedUrl };
+      })
+    );
+
+    return NextResponse.json(withUrls);
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Failed to fetch resources" },
+      { status: 500 }
+    );
   }
 }

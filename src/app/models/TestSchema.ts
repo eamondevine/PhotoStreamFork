@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export interface Test extends mongoose.Document {
-  url: string;
+  key: string;
   gps?: {
     lat: number;
     lng: number;
@@ -9,13 +9,13 @@ export interface Test extends mongoose.Document {
   note?: string;
   title?: string;
   tags?: string[];
+  time?: string;
 }
 
 const TestSchema = new mongoose.Schema<Test>(
   {
-    url: {
+    key: {
       type: String,
-      required: [true, "Must have associated url."],
     },
     gps: {
       lat: {
@@ -35,6 +35,9 @@ const TestSchema = new mongoose.Schema<Test>(
     tags: {
       type: [String],
       maxlength: [10, "Tag cannot be more than 10 characters"],
+    },
+    time: {
+      type: [String],
     },
   },
   { collection: "Photos" }
