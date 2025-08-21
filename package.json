@@ -22,6 +22,7 @@
     "class-variance-authority": "^0.7.0",
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.0",
+    "exiftool-vendored": "^30.3.0",
     "lucide-react": "^0.331.0",
     "mongoose": "^8.17.1",
     "next": "14.0.4",

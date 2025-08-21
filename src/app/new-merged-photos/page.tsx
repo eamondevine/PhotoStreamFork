@@ -1,5 +1,6 @@
 "use client";
 
+import ImageUpload from "@/components/ImageUpload";
 import { useResources } from "@/hooks/use-resources1";
 import Image from "next/image";
 
