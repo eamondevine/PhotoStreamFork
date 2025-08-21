@@ -1,4 +1,4 @@
-import { useQuery, QueryClientProvider } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Test } from "@/app/models/TestSchema";
 
 type Resource = Test & { signedUrl: string };
@@ -11,7 +11,8 @@ async function fetchResources(): Promise<Resource[]> {
 
 export function useResources() {
   return useQuery<Resource[]>({
-    queryKey: ["resources"],
+    queryKey: ["resources"], // the queryFn grabs the withUrls array and passes it here to the query key
     queryFn: fetchResources,
+    staleTime: 43200000,
   });
 }

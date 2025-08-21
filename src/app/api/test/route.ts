@@ -25,13 +25,13 @@ export async function GET(req: NextRequest) {
         });
         console.log("S3 Key:", item.key);
         const signedUrl = await getSignedUrl(s3Client, command, {
-          expiresIn: 3600,
+          expiresIn: 43200, // half day
         });
         return { ...item, signedUrl };
       })
     );
 
-    return NextResponse.json(withUrls);
+    return NextResponse.json(withUrls); //new array of objects that includes the signedUrls
   } catch (err) {
     return NextResponse.json(
       { error: "Failed to fetch resources" },
