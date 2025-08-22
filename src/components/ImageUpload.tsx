@@ -12,7 +12,7 @@ export default function ImageUpload() {
     if (!selectedFiles) return;
 
     setFile(Array.from(selectedFiles));
-    setPreviewUrl(URL.createObjectURL(selectedFiles));
+    setPreviewUrl(URL.createObjectURL(selectedFiles[0]));
 
     const formData = new FormData();
     if (selectedFiles) {
@@ -21,7 +21,7 @@ export default function ImageUpload() {
       });
     }
 
-    const res = await fetch("/", {
+    const res = await fetch("/metadata", {
       method: "POST",
       body: formData,
     });
@@ -41,9 +41,9 @@ export default function ImageUpload() {
       {previewUrl && <Image src={previewUrl} alt="preview" width={300} />}
       {exifData && (
         <div>
-          <p>Latitude: {exifData.GPSLatitude}</p>
-          <p>Longitude: {exifData.GPSLongitude}</p>
-          <p>Date Taken: {exifData.DateTimeOriginal}</p>
+          <p>Latitude: {exifData[0].GPSLatitude}</p>
+          <p>Longitude: {exifData[0].GPSLongitude}</p>
+          <p>Date Taken: {exifData[0].DateTimeOriginal}</p>
           {/* You can output more fields from exiftool here */}
         </div>
       )}
