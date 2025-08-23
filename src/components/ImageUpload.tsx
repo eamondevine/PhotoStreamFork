@@ -13,6 +13,7 @@ export default function ImageUpload() {
 
     setFile(Array.from(selectedFiles));
     setPreviewUrl(URL.createObjectURL(selectedFiles[0]));
+    console.log("file", file);
 
     const formData = new FormData();
     if (selectedFiles) {
@@ -38,14 +39,21 @@ export default function ImageUpload() {
         onChange={handleFileChange}
       />
       {/* Output file preview and exif data about file */}
-      {previewUrl && <Image src={previewUrl} alt="preview" width={300} />}
-      {exifData && (
+
+      {previewUrl ? (
+        <Image src={previewUrl} alt="preview" width={300} height={200} />
+      ) : (
+        <div>hi, nothing here</div>
+      )}
+      {exifData ? (
         <div>
-          <p>Latitude: {exifData[0].GPSLatitude}</p>
+          {/* <p>Latitude: {exifData[0].GPSLatitude}</p>
           <p>Longitude: {exifData[0].GPSLongitude}</p>
-          <p>Date Taken: {exifData[0].DateTimeOriginal}</p>
+          <p>Date Taken: {exifData[0].DateTimeOriginal}</p> */}
           {/* You can output more fields from exiftool here */}
         </div>
+      ) : (
+        <div>Hi, nothing here yet</div>
       )}
     </div>
   );

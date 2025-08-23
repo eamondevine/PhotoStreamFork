@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { exiftool } from "exiftool-vendored";
+import exifr from "exifr";
+
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,8 +16,12 @@ export async function POST(req: NextRequest) {
     const results = await Promise.all(
       files.map(async (file) => {
         const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-        const metadata = await exiftool.read(buffer);
+        const metadata = await exifr.parse(arrayBuffer, [
+          "GPSLatitude",
+          "GPSLongitude",
+          "DateTimeOriginal",
+        ]);
+        console.log("metadata", metadata);
         return metadata;
       })
     );

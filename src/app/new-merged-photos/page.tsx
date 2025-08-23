@@ -12,6 +12,7 @@ export default function Gallery() {
 
   return (
     <div>
+      <ImageUpload />
       {data?.map((r) => (
         <div key={r.key}>
           <h2>{r.title}</h2>
