@@ -22,7 +22,7 @@ export default function ImageUpload() {
       });
     }
 
-    const res = await fetch("/metadata", {
+    const res = await fetch("api/metadata", {
       method: "POST",
       body: formData,
     });
