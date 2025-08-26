@@ -29,11 +29,14 @@ export default function ImageUpload() {
     const data = await res.json();
     setExifData(data);
   };
+  const lat = exifData[0]?.latitude;
+  const long = exifData[0]?.longitude;
 
   return (
     <div className="space-y-2">
       <input
         type="file"
+        multiple
         alt="input for file"
         accept="image"
         onChange={handleFileChange}
@@ -41,20 +44,38 @@ export default function ImageUpload() {
       {/* Output file preview and exif data about file */}
 
       {previewUrl ? (
-        <Image src={previewUrl} alt="preview" width={300} height={200} />
+        <a href={previewUrl} target="_blank" rel="noopener noreferrer">
+          <Image
+            src={previewUrl}
+            alt="preview"
+            width={300}
+            height={0}
+            style={{ height: "auto" }}
+          />
+        </a>
       ) : (
         <div>hi, nothing here</div>
       )}
-      {exifData ? (
+      {exifData.length > 0 ? (
         <div>
-          {/* <p>Latitude: {exifData[0].GPSLatitude}</p>
-          <p>Longitude: {exifData[0].GPSLongitude}</p>
-          <p>Date Taken: {exifData[0].DateTimeOriginal}</p> */}
+          <p>Latitude: {exifData[0]?.latitude}</p>
+          <p>Longitude: {exifData[0]?.longitude}</p>
+          <p>Date Taken: {exifData[0]?.DateTimeOriginal}</p>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${lat},${long}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline"
+          >
+            Google Map Location
+          </a>
           {/* You can output more fields from exiftool here */}
         </div>
       ) : (
         <div>Hi, nothing here yet</div>
       )}
+      <br />
+      <hr />
     </div>
   );
 }
