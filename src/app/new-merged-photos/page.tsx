@@ -19,7 +19,28 @@ export default function Gallery() {
           <p>{r.note}</p>
           <p>{r.key}</p>
           <p>{r.time}</p>
-          <Image src={r.signedUrl} alt={r.key} width={300} height={200} />
+          <p>lattitude: {r.gps?.lat}</p>
+          <p>longitude: {r.gps?.lng}</p>
+          <a href={r.signedUrl} target="_blank" rel="noopener noreferrer">
+            <Image
+              src={r.signedUrl}
+              alt={r.key}
+              width={300}
+              height={0}
+              style={{ height: "auto" }}
+            />
+          </a>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${r.gps?.lat},${r.gps?.lng}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline"
+          >
+            Google Map Location
+          </a>
+          <br />
+          <br />
+          <br />
         </div>
       ))}
     </div>

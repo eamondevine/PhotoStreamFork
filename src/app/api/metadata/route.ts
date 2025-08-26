@@ -1,12 +1,25 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, userAgent } from "next/server";
 import exifr from "exifr";
+import dbConnect from "@/lib/dbconnect";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { format } from "date-fns";
+import TestModel from "@/app/models/TestSchema";
 
 export const runtime = "nodejs";
 
+const s3Client = new S3Client({
+  region: "ap-southeast-1",
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
+
 export async function POST(req: NextRequest) {
+  await dbConnect();
   try {
     const formData = await req.formData();
-    const files = formData.getAll("files") as Blob[];
+    const files = formData.getAll("files") as File[];
 
     if (!files || files.length === 0) {
       return NextResponse.json({ error: "No files uploaded" }, { status: 400 });
@@ -15,19 +28,49 @@ export async function POST(req: NextRequest) {
     // Process each file with exiftool
     const results = await Promise.all(
       files.map(async (file) => {
-        const arrayBuffer = await file.arrayBuffer();
-        const metadata = await exifr.parse(arrayBuffer, [
-          "GPSLatitude",
-          "GPSLongitude",
-          "DateTimeOriginal",
-        ]);
-        console.log("metadata", metadata);
-        return metadata;
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          const key = `pictures/${Date.now()}-${file.name}`;
+          await s3Client.send(
+            new PutObjectCommand({
+              Bucket: "eamon-test-bucket-1",
+              Key: key,
+              Body: buffer,
+              ContentType: "image/jpeg",
+              ContentDisposition: "inline",
+            })
+          );
+          const metadata = await exifr.parse(arrayBuffer, [
+            "GPSLatitude",
+            "GPSLongitude",
+            "DateTimeOriginal",
+          ]);
+          const lat = metadata.latitude;
+          const long = metadata.longitude;
+          const gps = lat && long ? { lat: lat, lng: long } : undefined;
+          console.log("gps", gps);
+          const time = metadata?.DateTimeOriginal
+            ? format(new Date(metadata.DateTimeOriginal), "yyyy-MM-dd HH:mm:ss")
+            : undefined;
+          console.log("time", time);
+          const doc = await TestModel.create({
+            key,
+            gps,
+            time,
+          });
+          return { success: true, doc };
+        } catch (fileErr: any) {
+          // Return per-file error without stopping the entire batch
+          console.error("File upload error:", file.name, fileErr);
+          return { success: false, file: file.name, error: fileErr.message };
+        }
       })
     );
 
-    return NextResponse.json(results);
+    return NextResponse.json({ results }, { status: 200 });
   } catch (err: any) {
+    console.log("POST handler error", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

@@ -13,6 +13,6 @@ export function useResources() {
   return useQuery<Resource[]>({
     queryKey: ["resources"], // the queryFn grabs the withUrls array and passes it here to the query key
     queryFn: fetchResources,
-    staleTime: 43200000,
+    staleTime: 43200000, //half day?
   });
 }

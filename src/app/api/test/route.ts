@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
         const command = new GetObjectCommand({
           Bucket: "eamon-test-bucket-1",
           Key: item.key,
+          ResponseContentDisposition: "inline",
         });
         console.log("S3 Key:", item.key);
         const signedUrl = await getSignedUrl(s3Client, command, {
