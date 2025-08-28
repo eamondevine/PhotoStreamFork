@@ -5,6 +5,7 @@ import PhotoMap from "@/components/Maps/PhotoMap";
 import { useResources } from "@/hooks/use-resources1";
 import Image from "next/image";
 import { useState } from "react";
+import { APIProvider } from "@vis.gl/react-google-maps";
 
 export default function Gallery() {
   const { data, isLoading, error } = useResources(); // the data here is grabbed from ["resources"] the query key in the tan stack hook
@@ -80,7 +81,12 @@ export default function Gallery() {
             <br />
           </div>
         ))}
-        <PhotoMap locationMarkers={mapMarkers} />
+        <APIProvider
+          apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
+          onLoad={() => console.log("Maps API has loaded.")}
+        >
+          <PhotoMap locationMarkers={mapMarkers} />
+        </APIProvider>
       </div>
     </div>
   );

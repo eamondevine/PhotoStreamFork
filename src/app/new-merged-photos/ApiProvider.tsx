@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
+import PhotoMap from "@/components/Maps/PhotoMap";
 export default function ApiProvider() {
   return (
     <APIProvider
