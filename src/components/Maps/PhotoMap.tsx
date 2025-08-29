@@ -1,8 +1,14 @@
 "use client";
 
 import React from "react";
-import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
+import {
+  AdvancedMarker,
+  InfoWindow,
+  Map,
+  Pin,
+} from "@vis.gl/react-google-maps";
 import { useState, useEffect } from "react";
+
 interface Location {
   lat: number;
   lng: number;
@@ -18,7 +24,7 @@ export default function PhotoMap({ locationMarkers }: PhotoMapProps) {
   } */
 
   const [hasDragged, setHasDragged] = useState(false);
-  const resetCenter = useEffect(() => {
+  useEffect(() => {
     setHasDragged(false);
   }, [locationMarkers]);
 
@@ -30,6 +36,7 @@ export default function PhotoMap({ locationMarkers }: PhotoMapProps) {
         center={
           hasDragged ? undefined : locationMarkers[locationMarkers.length - 1]
         }
+        mapId="DEMO_MAP_ID"
         onDrag={() => setHasDragged(true)}
         /* onCameraChanged={(ev: MapCameraChangedEvent) =>
             console.log(
@@ -42,7 +49,12 @@ export default function PhotoMap({ locationMarkers }: PhotoMapProps) {
         reuseMaps={true}
       >
         {locationMarkers.map((loc, idx) => (
-          <Marker position={loc} key={idx} />
+          <AdvancedMarker position={loc} key={idx}>
+            <div className="w-auto text-center bg-blue-500">
+              <p className="m-auto">I'm here</p>
+            </div>
+            ;
+          </AdvancedMarker>
         ))}
       </Map>
     </div>
