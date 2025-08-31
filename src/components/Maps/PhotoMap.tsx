@@ -8,7 +8,6 @@ import {
   Pin,
 } from "@vis.gl/react-google-maps";
 import { useState, useEffect } from "react";
-
 interface Location {
   lat: number;
   lng: number;
@@ -50,10 +49,9 @@ export default function PhotoMap({ locationMarkers }: PhotoMapProps) {
       >
         {locationMarkers.map((loc, idx) => (
           <AdvancedMarker position={loc} key={idx}>
-            <div className="w-auto text-center bg-blue-500">
+            <div className="default-marker text-center ">
               <p className="m-auto">I'm here</p>
             </div>
-            ;
           </AdvancedMarker>
         ))}
       </Map>
