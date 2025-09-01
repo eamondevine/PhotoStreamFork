@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import {
   AdvancedMarker,
   InfoWindow,
   Map,
-  Pin,
+  useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
-import { useState, useEffect } from "react";
+
 interface Location {
   lat: number;
   lng: number;
@@ -17,12 +17,45 @@ interface PhotoMapProps {
   locationMarkers: Location[];
 }
 
-export default function PhotoMap({ locationMarkers }: PhotoMapProps) {
-  /* if(!locations || locations.length === 0){
-    return <p>No locations to show on the map.</p>;
-  } */
+function MarkerWithInfoWindow({ position }: { position: Location }) {
+  const [markerRef, marker] = useAdvancedMarkerRef();
+  const [infoWindowShown, setInfoWindowShown] = useState(false);
 
+  const handleMarkerClick = useCallback(
+    () => setInfoWindowShown((isShown) => !isShown),
+    []
+  );
+
+  const handleClose = useCallback(() => setInfoWindowShown(false), []);
+
+  return (
+    <>
+      <AdvancedMarker
+        ref={markerRef}
+        position={position}
+        onClick={handleMarkerClick}
+      >
+        <div className="default-marker text-center">
+          <p className="m-auto">Hi</p>
+        </div>
+      </AdvancedMarker>
+      {infoWindowShown && (
+        <InfoWindow anchor={marker} onClose={handleClose}>
+          <h2>Title</h2>
+          <ol>
+            <li>
+              Marker at {position.lat}, {position.lng}
+            </li>
+          </ol>
+        </InfoWindow>
+      )}
+    </>
+  );
+}
+
+export default function PhotoMap({ locationMarkers }: PhotoMapProps) {
   const [hasDragged, setHasDragged] = useState(false);
+
   useEffect(() => {
     setHasDragged(false);
   }, [locationMarkers]);
@@ -35,24 +68,12 @@ export default function PhotoMap({ locationMarkers }: PhotoMapProps) {
         center={
           hasDragged ? undefined : locationMarkers[locationMarkers.length - 1]
         }
-        mapId="DEMO_MAP_ID"
+        mapId={process.env.NEXT_PUBLIC_MAP_ID}
         onDrag={() => setHasDragged(true)}
-        /* onCameraChanged={(ev: MapCameraChangedEvent) =>
-            console.log(
-              "camera changed:",
-              ev.detail.center,
-              "zoom:",
-              ev.detail.zoom
-            )
-          } */
         reuseMaps={true}
       >
         {locationMarkers.map((loc, idx) => (
-          <AdvancedMarker position={loc} key={idx}>
-            <div className="default-marker text-center ">
-              <p className="m-auto">I'm here</p>
-            </div>
-          </AdvancedMarker>
+          <MarkerWithInfoWindow key={idx} position={loc} />
         ))}
       </Map>
     </div>
