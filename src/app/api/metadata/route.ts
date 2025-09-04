@@ -46,12 +46,13 @@ export async function POST(req: NextRequest) {
             "GPSLongitude",
             "DateTimeOriginal",
           ]);
-          const lat = metadata.latitude;
-          const long = metadata.longitude;
-          const gps = lat && long ? { lat: lat, lng: long } : undefined;
+          const gps =
+            metadata.latitude && metadata.longitude
+              ? { lat: metadata.latitude, lng: metadata.longitude }
+              : undefined;
           console.log("gps", gps);
-          const time = metadata?.DateTimeOriginal
-            ? format(new Date(metadata.DateTimeOriginal), "yyyy-MM-dd HH:mm:ss")
+          const time = metadata.DateTimeOriginal
+            ? metadata.DateTimeOriginal
             : undefined;
           console.log("time", time);
           const doc = await TestModel.create({

@@ -49,13 +49,7 @@ export default function Gallery() {
               {r.gps?.lng}
             </p>
             <a href={r.signedUrl} target="_blank" rel="noopener noreferrer">
-              <Image
-                src={r.signedUrl}
-                alt={r.key}
-                width={300}
-                height={0}
-                style={{ height: "auto" }}
-              />
+              <Image src={r.signedUrl} alt={r.key} width={300} height={} />
             </a>
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${r.gps?.lat},${r.gps?.lng}`}
