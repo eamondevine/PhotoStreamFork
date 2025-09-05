@@ -28,8 +28,8 @@ export default function Gallery() {
   if (error) return <p>Something went wrong</p>;
 
   return (
-    <div className="flex flex-column">
-      <div className="m-auto mb-10">
+    <div className="flex flex-col">
+      <div className="flex flex-col mb-10 items-center">
         <ImageUpload />
         {data?.map((r) => (
           <div key={r.key}>
@@ -49,7 +49,7 @@ export default function Gallery() {
               {r.gps?.lng}
             </p>
             <a href={r.signedUrl} target="_blank" rel="noopener noreferrer">
-              <Image src={r.signedUrl} alt={r.key} width={300} height={} />
+              <Image src={r.signedUrl} alt={r.key} width={300} height={200} />
             </a>
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${r.gps?.lat},${r.gps?.lng}`}

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Upload } from "lucide-react";
 
 export default function ImageUpload() {
   const [file, setFile] = useState<File[]>([]);
@@ -27,14 +28,20 @@ export default function ImageUpload() {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="gap-2 mb-5 flex flex-col w-fit items-center">
       <input
+        id="file-upload"
         type="file"
         multiple
         alt="input for file"
         accept="image"
         onChange={handleFileChange}
+        style={{ display: "none" }}
       />
+      <h1 className="text-[2rem] m-0">Upload files here</h1>
+      <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
+        <Upload className="h-10 w-10" />
+      </label>
     </div>
   );
 }
