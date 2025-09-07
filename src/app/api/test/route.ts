@@ -19,16 +19,14 @@ export async function GET(req: NextRequest) {
 
     const withUrls = await Promise.all(
       metadata.map(async (item) => {
-        const command = new GetObjectCommand({
+        new GetObjectCommand({
           Bucket: "eamon-test-bucket-1",
           Key: item.key,
           ResponseContentDisposition: "inline",
         });
         console.log("S3 Key:", item.key);
-        const signedUrl = await getSignedUrl(s3Client, command, {
-          expiresIn: 43200, // half day
-        });
-        return { ...item, signedUrl };
+        const url = `https://eamon-test-bucket-1.s3.ap-southeast-1.amazonaws.com/${item.key}`;
+        return { ...item, url };
       })
     );
 

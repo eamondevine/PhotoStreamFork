@@ -48,8 +48,8 @@ export default function Gallery() {
               <span className="text-[1.5rem] underline">longitude: </span>
               {r.gps?.lng}
             </p>
-            <a href={r.signedUrl} target="_blank" rel="noopener noreferrer">
-              <Image src={r.signedUrl} alt={r.key} width={300} height={200} />
+            <a href={r.url} target="_blank" rel="noopener noreferrer">
+              <Image src={r.url} alt={r.key} width={300} height={200} />
             </a>
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${r.gps?.lat},${r.gps?.lng}`}

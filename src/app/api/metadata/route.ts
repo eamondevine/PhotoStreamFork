@@ -2,7 +2,6 @@ import { NextRequest, NextResponse, userAgent } from "next/server";
 import exifr from "exifr";
 import dbConnect from "@/lib/dbconnect";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { format } from "date-fns";
 import TestModel from "@/app/models/TestSchema";
 
 export const runtime = "nodejs";

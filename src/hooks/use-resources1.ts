@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Test } from "@/app/models/TestSchema";
 
-type Resource = Test & { signedUrl: string };
+type Resource = Test & { url: string };
 
 async function fetchResources(): Promise<Resource[]> {
   const res = await fetch("/api/test");
