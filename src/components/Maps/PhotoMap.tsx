@@ -8,6 +8,11 @@ import {
   useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
 
+interface Resource {
+  note?: string;
+  key?: string;
+}
+
 interface Location {
   lat: number;
   lng: number;
@@ -15,6 +20,7 @@ interface Location {
 
 interface PhotoMapProps {
   locationMarkers: Location[];
+  resources: Resource[];
 }
 
 function MarkerWithInfoWindow({ position }: { position: Location }) {
@@ -42,11 +48,6 @@ function MarkerWithInfoWindow({ position }: { position: Location }) {
       {infoWindowShown && (
         <InfoWindow anchor={marker} onClose={handleClose}>
           <h2>Title</h2>
-          <ol>
-            <li>
-              Marker at {position.lat}, {position.lng}
-            </li>
-          </ol>
         </InfoWindow>
       )}
     </>

@@ -38,7 +38,7 @@ export default function ImageUpload() {
         onChange={handleFileChange}
         style={{ display: "none" }}
       />
-      <h1 className="text-[2rem] m-0">Upload files here</h1>
+      {/* <h1 className="text-[2rem] m-0">Upload files here</h1> */}
       <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
         <Upload className="h-10 w-10" />
       </label>

@@ -79,7 +79,7 @@ export default function Gallery() {
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
           onLoad={() => console.log("Maps API has loaded.")}
         >
-          <PhotoMap locationMarkers={mapMarkers} />
+          <PhotoMap resources={data} locationMarkers={mapMarkers} />
         </APIProvider>
       </div>
     </div>
