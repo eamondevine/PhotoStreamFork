@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useState, useEffect } from "react";
+import Image from "next/image";
 import {
   AdvancedMarker,
   InfoWindow,
@@ -10,6 +11,7 @@ import {
 
 interface Resource {
   note?: string;
+  url: string;
 }
 
 interface Location {
@@ -25,9 +27,11 @@ interface PhotoMapProps {
 function MarkerWithInfoWindow({
   position,
   note,
+  url,
 }: {
   position: Location;
   note: string;
+  url: string;
 }) {
   const [markerRef, marker] = useAdvancedMarkerRef();
   const [infoWindowShown, setInfoWindowShown] = useState(false);
@@ -54,6 +58,7 @@ function MarkerWithInfoWindow({
         <InfoWindow anchor={marker} onClose={handleClose}>
           <h2>Title</h2>
           <p>{note ?? "no note available"}</p>
+          <Image src={url} alt={"title"} width={300} height={200} />
         </InfoWindow>
       )}
     </>
@@ -87,6 +92,7 @@ export default function PhotoMap({
             key={idx}
             position={loc}
             note={resources[idx]?.note ?? ""}
+            url={resources[idx]?.url}
           />
         ))}
       </Map>

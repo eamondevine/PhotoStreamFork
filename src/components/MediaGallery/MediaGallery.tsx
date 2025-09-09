@@ -227,7 +227,7 @@ export default function MediaGallery() {
           </ul>
         )}
         <PhotoMap
-          resources={data!.map((r) => ({ note: r.note }))}
+          resources={data!.map((r) => ({ note: r.note, url: r.url }))}
           locationMarkers={mapMarkers}
         />
       </Container>
