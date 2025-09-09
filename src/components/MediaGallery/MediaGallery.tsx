@@ -226,7 +226,10 @@ export default function MediaGallery() {
             })}
           </ul>
         )}
-        <PhotoMap resources={data} locationMarkers={mapMarkers} />
+        <PhotoMap
+          resources={data!.map((r) => ({ note: r.note }))}
+          locationMarkers={mapMarkers}
+        />
       </Container>
     </>
   );

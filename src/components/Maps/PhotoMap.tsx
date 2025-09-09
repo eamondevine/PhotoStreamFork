@@ -10,7 +10,6 @@ import {
 
 interface Resource {
   note?: string;
-  key?: string;
 }
 
 interface Location {
@@ -23,7 +22,13 @@ interface PhotoMapProps {
   resources: Resource[];
 }
 
-function MarkerWithInfoWindow({ position }: { position: Location }) {
+function MarkerWithInfoWindow({
+  position,
+  note,
+}: {
+  position: Location;
+  note: string;
+}) {
   const [markerRef, marker] = useAdvancedMarkerRef();
   const [infoWindowShown, setInfoWindowShown] = useState(false);
 
@@ -48,13 +53,17 @@ function MarkerWithInfoWindow({ position }: { position: Location }) {
       {infoWindowShown && (
         <InfoWindow anchor={marker} onClose={handleClose}>
           <h2>Title</h2>
+          <p>{note ?? "no note available"}</p>
         </InfoWindow>
       )}
     </>
   );
 }
 
-export default function PhotoMap({ locationMarkers }: PhotoMapProps) {
+export default function PhotoMap({
+  locationMarkers,
+  resources,
+}: PhotoMapProps) {
   const [hasDragged, setHasDragged] = useState(false);
 
   useEffect(() => {
@@ -74,7 +83,11 @@ export default function PhotoMap({ locationMarkers }: PhotoMapProps) {
         reuseMaps={true}
       >
         {locationMarkers.map((loc, idx) => (
-          <MarkerWithInfoWindow key={idx} position={loc} />
+          <MarkerWithInfoWindow
+            key={idx}
+            position={loc}
+            note={resources[idx]?.note ?? ""}
+          />
         ))}
       </Map>
     </div>
