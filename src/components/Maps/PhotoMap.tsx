@@ -9,30 +9,22 @@ import {
   useAdvancedMarkerRef,
 } from "@vis.gl/react-google-maps";
 
-interface Resource {
+interface Marker {
+  gps?: {
+    lat: number;
+    lng: number;
+  };
   note?: string;
   url: string;
-}
-
-interface Location {
-  lat: number;
-  lng: number;
+  title?: string;
+  key: string;
 }
 
 interface PhotoMapProps {
-  locationMarkers: Location[];
-  resources: Resource[];
+  markers: Marker[];
 }
 
-function MarkerWithInfoWindow({
-  position,
-  note,
-  url,
-}: {
-  position: Location;
-  note: string;
-  url: string;
-}) {
+function MarkerWithInfoWindow({ gps, note, url, title }: Marker) {
   const [markerRef, marker] = useAdvancedMarkerRef();
   const [infoWindowShown, setInfoWindowShown] = useState(false);
 
@@ -47,7 +39,7 @@ function MarkerWithInfoWindow({
     <>
       <AdvancedMarker
         ref={markerRef}
-        position={position}
+        position={gps}
         onClick={handleMarkerClick}
       >
         <div className="default-marker text-center">
@@ -56,24 +48,21 @@ function MarkerWithInfoWindow({
       </AdvancedMarker>
       {infoWindowShown && (
         <InfoWindow anchor={marker} onClose={handleClose}>
-          <h2>Title</h2>
+          <h2>{title ?? "no title"}</h2>
           <p>{note ?? "no note available"}</p>
-          <Image src={url} alt={"title"} width={300} height={200} />
+          <Image src={url} alt={title ?? "no title"} width={300} height={200} />
         </InfoWindow>
       )}
     </>
   );
 }
 
-export default function PhotoMap({
-  locationMarkers,
-  resources,
-}: PhotoMapProps) {
+export default function PhotoMap({ markers }: PhotoMapProps) {
   const [hasDragged, setHasDragged] = useState(false);
 
   useEffect(() => {
     setHasDragged(false);
-  }, [locationMarkers]);
+  }, [markers]);
 
   return (
     <div className="w-[600px] h-[600px]">
@@ -81,18 +70,21 @@ export default function PhotoMap({
         defaultZoom={8}
         defaultCenter={{ lat: 24.14434779767916, lng: 121.01165256305426 }}
         center={
-          hasDragged ? undefined : locationMarkers[locationMarkers.length - 1]
+          hasDragged || markers.length === 0
+            ? undefined
+            : markers[markers.length - 1]?.gps
         }
         mapId={process.env.NEXT_PUBLIC_MAP_ID}
         onDrag={() => setHasDragged(true)}
         reuseMaps={true}
       >
-        {locationMarkers.map((loc, idx) => (
+        {markers.map((marker) => (
           <MarkerWithInfoWindow
-            key={idx}
-            position={loc}
-            note={resources[idx]?.note ?? ""}
-            url={resources[idx]?.url}
+            key={marker.key}
+            gps={marker.gps}
+            note={marker.note}
+            url={marker.url}
+            title={marker.title}
           />
         ))}
       </Map>

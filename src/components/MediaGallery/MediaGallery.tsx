@@ -24,21 +24,31 @@ import {
 import { useResources } from "@/hooks/use-resources1";
 import PhotoMap from "../Maps/PhotoMap";
 
+interface Marker {
+  position?: {
+    lat: number;
+    lng: number;
+  };
+  note?: string;
+  url: string;
+  title?: string;
+  key: string;
+}
+
 export default function MediaGallery() {
   const { data, isLoading, error } = useResources(); // the data here is grabbed from ["resources"] the query key in the tan stack hook
-  const [mapMarkers, setMapMarkers] = useState<{ lat: number; lng: number }[]>(
-    []
-  );
+  const [mapMarkers, setMapMarkers] = useState<Marker[]>([]);
   const [selected, setSelected] = useState<Array<string>>([]);
   const [creation, setCreation] = useState();
 
-  const toggleMarker = (lat: number, lng: number) => {
+  const toggleMarker = (marker: Marker) => {
     setMapMarkers((prev) => {
-      const exists = prev.some((loc) => loc.lat === lat && loc.lng === lng);
+      console.log("Toggling marker:", marker);
+      const exists = prev.some((m) => m.key === marker.key);
       if (exists) {
-        return prev.filter((loc) => loc.lat !== lat && loc.lng !== lng);
+        return prev.filter((m) => m.key !== marker.key);
       } else {
-        return [...prev, { lat, lng }];
+        return [...prev, marker];
       }
     });
   };
@@ -207,10 +217,10 @@ export default function MediaGallery() {
                       <button
                         className="text-[1.3] text-blue-700"
                         onClick={() => {
-                          if (r.gps?.lat == null || r.gps?.lng == null) {
+                          if (r.gps == null) {
                             return;
                           }
-                          toggleMarker(r.gps.lat, r.gps.lng);
+                          toggleMarker(r);
                         }}
                       >
                         Toggle Map Marker
@@ -226,10 +236,7 @@ export default function MediaGallery() {
             })}
           </ul>
         )}
-        <PhotoMap
-          resources={data!.map((r) => ({ note: r.note, url: r.url }))}
-          locationMarkers={mapMarkers}
-        />
+        <PhotoMap markers={mapMarkers} />
       </Container>
     </>
   );
