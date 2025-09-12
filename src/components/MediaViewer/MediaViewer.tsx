@@ -5,6 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
 import Container from "@/components/Container";
 import { buttonVariants } from "@/components/ui/button";
+import { format } from "date-fns";
 
 interface Resource {
   key: string;
@@ -38,10 +39,23 @@ const MediaViewer = ({ resource }: { resource: Resource }) => {
             </li>
           </ul>
         </div>
-        <ul className="flex items-center gap-4"></ul>
       </Container>
 
-      <div className="relative flex justify-center items-center align-center w-full h-full">
+      <div className="relative flex flex-col justify-center items-center align-center w-full h-full">
+        <ul className="flex flex-col items-center mb-4">
+          <li className="underline mb-2 text-white text-[2rem]">
+            {resource.title ?? "no title"}
+          </li>
+          <li className="text-white text-[1.2rem]">
+            Date 日期: {format(new Date(`${resource.time}`), "yyyy/MM/dd")}
+          </li>
+          <li className="text-white text-[1.1rem]">
+            Time 時間: {format(new Date(`${resource.time}`), "p")}
+          </li>
+          <li className="border p-2 rounded-md border-grey-300 mt-2 text-white text-[1.1rem]">
+            {resource.note ?? "no note"}
+          </li>
+        </ul>
         <Image src={resource.url} alt={resource.key} width={300} height={200} />
       </div>
     </div>

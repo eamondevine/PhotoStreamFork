@@ -82,12 +82,6 @@ export async function PATCH(req: NextRequest) {
     const { key, updates } = body; // { key: "...", updates: { note: "new note" } }
 
     // optional: restrict which fields can be updated
-    const allowedFields = ["gps", "time", "note"];
-    const safeUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([k]) => allowedFields.includes(k))
-    );
-
-    // optional: restrict which fields can be updated
     /*   const allowedFields = ["gps", "time", "note"];
     const safeUpdates = Object.fromEntries(
       Object.entries(updates).filter(([k]) => allowedFields.includes(k))

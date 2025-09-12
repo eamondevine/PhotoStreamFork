@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
 import { Plus, X, Save } from "lucide-react";
 import Container from "@/components/Container";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import PatchForm from "../PatchForm";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,6 +53,37 @@ export default function MediaGallery() {
         return [...prev, marker];
       }
     });
+  };
+
+  const queryClient = useQueryClient();
+
+  const handleDeleteSelected = async () => {
+    if (selected.length === 0) return;
+
+    if (!confirm(`Are you sure you want to delete ${selected.length} file(s)?`))
+      return;
+
+    try {
+      const res = await fetch("/api/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keys: selected }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Delete failed");
+
+      // Remove deleted items from cache immediately
+      queryClient.setQueryData(["resources"], (oldData: any) =>
+        oldData.filter((item: any) => !selected.includes(item.key))
+      );
+
+      // Clear selection
+      setSelected([]);
+      alert("Deleted successfully!");
+    } catch (err: any) {
+      alert("Error deleting files: " + err.message);
+    }
   };
 
   /**
@@ -112,14 +145,15 @@ export default function MediaGallery() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost">
-                    <Plus className="h-6 w-6" />
-                    <span className="sr-only">Create New</span>
+                    <span>DELETE</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
                   <DropdownMenuGroup>
                     <DropdownMenuItem>
-                      <span>Option</span>
+                      <Button variant="ghost" onClick={handleDeleteSelected}>
+                        Are you sure?
+                      </Button>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
@@ -220,6 +254,20 @@ export default function MediaGallery() {
                       >
                         Toggle Map Marker
                       </button>
+                      {selected.length === 1 && selected[0] === r.key && (
+                        <PatchForm
+                          fileKey={selected[0]}
+                          initialNote={
+                            data?.find((r) => r.key === selected[0])?.note
+                          }
+                          initialTitle={
+                            data?.find((r) => r.key === selected[0])?.title
+                          }
+                          onSuccess={(updated) => {
+                            console.log("File updated:", updated);
+                          }}
+                        />
+                      )}
                       <br />
                       <br />
                     </div>
@@ -229,6 +277,7 @@ export default function MediaGallery() {
             })}
           </ul>
         )}
+
         <PhotoMap markers={mapMarkers} />
       </Container>
     </>
