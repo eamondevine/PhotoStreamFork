@@ -74,3 +74,48 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+
+export async function PATCH(req: NextRequest) {
+  await dbConnect();
+  try {
+    const body = await req.json(); // expect JSON from frontend
+    const { key, updates } = body; // { key: "...", updates: { note: "new note" } }
+
+    // optional: restrict which fields can be updated
+    const allowedFields = ["gps", "time", "note"];
+    const safeUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([k]) => allowedFields.includes(k))
+    );
+
+    // optional: restrict which fields can be updated
+    /*   const allowedFields = ["gps", "time", "note"];
+    const safeUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([k]) => allowedFields.includes(k))
+    );
+
+    const updatedFile = await TestModel.findOneAndUpdate(
+      { key },
+      { $set: safeUpdates },
+      { new: true }
+    ); */
+
+    const updatedFile = await TestModel.findOneAndUpdate(
+      { key },
+      { $set: updates },
+      { new: true }
+    );
+    if (!updatedFile) {
+      return NextResponse.json(
+        { error: "Can't change this file" },
+        { status: 400 }
+      );
+    }
+    return NextResponse.json(
+      { success: true, data: updatedFile },
+      { status: 200 }
+    );
+  } catch (err: any) {
+    console.error("PATCH error:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
