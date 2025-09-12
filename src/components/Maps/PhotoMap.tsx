@@ -50,7 +50,13 @@ function MarkerWithInfoWindow({ gps, note, url, title }: Marker) {
         <InfoWindow anchor={marker} onClose={handleClose}>
           <h2>{title ?? "no title"}</h2>
           <p>{note ?? "no note available"}</p>
-          <Image src={url} alt={title ?? "no title"} width={300} height={200} />
+          <Image
+            loading="lazy"
+            src={url}
+            alt={title ?? "no title"}
+            width={300}
+            height={200}
+          />
         </InfoWindow>
       )}
     </>

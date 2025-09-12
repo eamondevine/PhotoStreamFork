@@ -169,12 +169,6 @@ export default function MediaGallery() {
                         checked={isChecked}
                       />
                     </label>
-                    {/* <Link
-                        className={`block cursor-pointer border-8 transition-[border] ${
-                          isChecked ? "border-blue-500" : "border-white"
-                        }`}
-                        href={`/resources/${resource.public_id}`}
-                      > */}
                     <div key={r.key}>
                       <h2>{r.title}</h2>
                       <p>{r.note}</p>
@@ -197,14 +191,15 @@ export default function MediaGallery() {
                         </span>
                         {r.gps?.lng}
                       </p>
-                      <a href={r.url} target="_blank" rel="noopener noreferrer">
+                      <Link href={`/resources/${r.key}`}>
                         <Image
                           src={r.url}
                           alt={r.key}
                           width={300}
                           height={200}
                         />
-                      </a>
+                      </Link>
+
                       <a
                         href={`https://www.google.com/maps/search/?api=1&query=${r.gps?.lat},${r.gps?.lng}`}
                         target="_blank"
@@ -228,8 +223,6 @@ export default function MediaGallery() {
                       <br />
                       <br />
                     </div>
-
-                    {/* </Link> */}
                   </div>
                 </li>
               );
