@@ -1,26 +1,7 @@
-# Photo Library Starter
+# Anniversary Photo Stream _for Amy and Eamon_ 
+<sup> This is a cloned Repo originally for a <a href="https://github.com/colbyfayock/demo-photo-library-starter" target="_blank" rel="noopener noreferrer">Cloudinary Photo Stream</a> created for a FreeCodeCamp tutorial by Colby Faycock</sup> 
 
-Hey freeCodeCamp 👋 this is your starting point for digging into building your own Photo Library using Next.js and Cloudinary.
+## The original version was created by Colby Faycock, see below for his original README file
 
-## 🚀 Getting Started
-
-To get started, first create your new application by running the command below:
-
-```
-npx create-next-app@latest -e https://github.com/colbyfayock/demo-photo-library-starter my-photo-library
-```
-
-> Tip: Alternatively, you can clone this repository, but running the above command helps with some additional tasks like resetting git history and installing dependencies!
-
-## Follow Along
-
-Coming here from another place? Be sure to follow along with the tutorial over on freeCodeCamp:
-- Video: https://www.youtube.com/watch?v=l71rTm_0260
-
-## More Tutorials & Walkthroughs
-
-🐦 [Follow me on Twitter](https://twitter.com/colbyfayock)
-
-📺 [Subscribe on YouTube](https://www.youtube.com/colbyfayock)
-
-✉️ [Sign Up for My Newsletter](https://colbyfayock.com/newsletter)
+This is a digital photo album (aka photo stream) web application that I created for my girlfriend and I.
+I have incorporated Google Maps API for react using <a href="https://visgl.github.io/react-google-maps/" target="_blank" rel="noopener noreferrer"> visgl react google maps </a> and a tool called <a href="https://www.npmjs.com/package/exifr" target="_blank" rel="noopener noreferrer"> exifr </a> which can extract metadata from images, such as gps coordinates and timestamps. These are the two main tools I use in this project in order to display data on the embedded Google Map, using Google Maps API _markers_ and _info window_.<br/> 
