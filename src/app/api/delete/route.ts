@@ -1,14 +1,17 @@
-// app/api/delete/route.ts (Next.js App Router) or pages/api/delete.ts (Pages Router)
-import { NextRequest, NextResponse } from "next/server"; // App Router
-import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { NextRequest, NextResponse } from "next/server";
+import {
+  S3Client,
+  DeleteObjectCommand,
+  DeleteObjectsCommand,
+} from "@aws-sdk/client-s3";
 import dbConnect from "@/lib/dbconnect";
 import TestModel from "@/app/models/TestSchema";
 
 const s3Client = new S3Client({
   region: "ap-southeast-1",
   credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY!,
-    secretAccessKey: process.env.S3_SECRET_KEY!,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
 });
 
@@ -16,25 +19,39 @@ export async function DELETE(req: NextRequest) {
   await dbConnect();
 
   try {
-    const body = await req.json();
-    const { keys } = body;
+    const { keys } = await req.json();
 
     if (!Array.isArray(keys) || keys.length === 0) {
       return NextResponse.json({ error: "No keys provided" }, { status: 400 });
     }
 
-    // Delete from S3
-    for (const key of keys) {
+    if (keys.length === 1) {
+      // Single delete
       try {
         await s3Client.send(
           new DeleteObjectCommand({
             Bucket: process.env.S3_BUCKET_NAME!,
-            Key: key, // exact key, including slashes
+            Key: keys[0],
           })
         );
       } catch (err) {
-        console.error(`Error deleting ${key} from S3:`, err);
-        // Optional: continue deleting others or fail immediately
+        console.error(`Error deleting ${keys[0]} from S3:`, err);
+      }
+    } else {
+      // Multi-delete
+      try {
+        await s3Client.send(
+          new DeleteObjectsCommand({
+            Bucket: process.env.S3_BUCKET_NAME!,
+            Delete: {
+              Objects: keys.map((key) => ({ Key: key })),
+              // Quiet: false to return details for each key
+              Quiet: false,
+            },
+          })
+        );
+      } catch (err) {
+        console.error("Error deleting multiple keys from S3:", err);
       }
     }
 

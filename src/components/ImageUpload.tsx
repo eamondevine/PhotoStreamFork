@@ -1,30 +1,40 @@
 "use client";
-import { useState } from "react";
 import { Upload } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 export default function ImageUpload() {
-  const [file, setFile] = useState<File[]>([]);
+  const queryClient = useQueryClient();
+  const [uploading, setUploading] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
-    if (!selectedFiles) return;
-
-    setFile(Array.from(selectedFiles));
-    console.log("file", file);
+    if (!selectedFiles || selectedFiles.length === 0) return;
 
     const formData = new FormData();
-    if (selectedFiles) {
-      Array.from(selectedFiles).forEach((file) => {
-        formData.append("files", file);
-      });
-    }
+    Array.from(selectedFiles).forEach((file) => formData.append("files", file));
 
-    const res = await fetch("api/metadata", {
-      method: "POST",
-      body: formData,
-    });
-    const data = await res.json();
-    console.log("1st in array post response: ", data[0]);
+    setUploading(true);
+
+    try {
+      const res = await fetch("/api/metadata", {
+        method: "POST",
+        body: formData,
+      });
+      const dataRes = await res.json();
+
+      if (!res.ok || !dataRes?.data) {
+        console.error("Upload failed:", dataRes?.error);
+        return;
+      }
+
+      // Invalidate query to refresh gallery
+      queryClient.invalidateQueries({ queryKey: ["resources"] });
+    } catch (err: any) {
+      console.error("Upload error:", err.message || err);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -33,12 +43,11 @@ export default function ImageUpload() {
         id="file-upload"
         type="file"
         multiple
-        alt="input for file"
-        accept="image"
+        accept="image/*"
         onChange={handleFileChange}
         style={{ display: "none" }}
+        disabled={uploading}
       />
-      {/* <h1 className="text-[2rem] m-0">Upload files here</h1> */}
       <label htmlFor="file-upload" style={{ cursor: "pointer" }}>
         <Upload className="h-10 w-10" />
       </label>
