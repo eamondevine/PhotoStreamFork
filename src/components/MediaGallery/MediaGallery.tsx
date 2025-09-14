@@ -4,10 +4,11 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, X, Save } from "lucide-react";
+import { X, Save } from "lucide-react";
 import Container from "@/components/Container";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { format } from "date-fns";
 import PatchForm from "../PatchForm";
 import {
   DropdownMenu,
@@ -109,20 +110,6 @@ export default function MediaGallery() {
 
   return (
     <>
-      <Dialog open={!!creation} onOpenChange={handleOnCreationOpenChange}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Save your creation?</DialogTitle>
-          </DialogHeader>
-          <DialogFooter className="justify-end sm:justify-end">
-            <Button>
-              <Save className="h-4 w-4 mr-2" />
-              Save to Library
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       {/** Management navbar presented when assets are selected */}
 
       {selected.length > 0 && (
@@ -169,112 +156,106 @@ export default function MediaGallery() {
           <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mb-12">
             {" "}
             {/* grid fixed for 1 col */}
-            {data.map((r) => {
-              const isChecked = selected.includes(r.key);
+            {[...data]
+              .sort((a, b) => {
+                const timeA = a.time ? new Date(a.time).getTime() : 0; // fallback for null
+                const timeB = b.time ? new Date(b.time).getTime() : 0;
+                return timeB - timeA; // newest first
+              })
+              .map((r) => {
+                const isChecked = selected.includes(r.key);
 
-              function handleOnSelectResource(checked: boolean) {
-                setSelected((prev) => {
-                  if (checked) {
-                    return Array.from(new Set([...(prev || []), r.key]));
-                  } else {
-                    return prev.filter((key) => key !== r.key);
-                  }
-                });
-              }
+                function handleOnSelectResource(checked: boolean) {
+                  setSelected((prev) => {
+                    if (checked) {
+                      return Array.from(new Set([...(prev || []), r.key]));
+                    } else {
+                      return prev.filter((key) => key !== r.key);
+                    }
+                  });
+                }
 
-              return (
-                <li key={r.key} className="bg-white dark:bg-zinc-700">
-                  <div className="relative group">
-                    <label
-                      className={`absolute ${
-                        isChecked ? "opacity-100" : "opacity-0"
-                      } group-hover:opacity-100 transition-opacity top-3 left-3 p-1`}
-                      htmlFor={r.key}
-                    >
-                      <span className="sr-only">
-                        Select Image &quot;{r.key}&quot;
-                      </span>
-                      <Checkbox
-                        className={`w-6 h-6 rounded-full bg-white shadow ${
-                          isChecked ? "border-blue-500" : "border-zinc-200"
-                        }`}
-                        id={r.key}
-                        onCheckedChange={handleOnSelectResource}
-                        checked={isChecked}
-                      />
-                    </label>
-                    <div key={r.key}>
-                      <h2>{r.title}</h2>
-                      <p>{r.note}</p>
-                      <p>{r.key}</p>
-                      <p>
-                        <span className="text-[1.5rem] underline">
-                          Date and Time:{" "}
+                return (
+                  <li key={r.key} className="bg-white dark:bg-zinc-700">
+                    <div className="relative group">
+                      <label
+                        className={`absolute ${
+                          isChecked ? "opacity-100" : "opacity-0"
+                        } group-hover:opacity-100 transition-opacity top-3 left-3 p-1`}
+                        htmlFor={r.key}
+                      >
+                        <span className="sr-only">
+                          Select Image &quot;{r.key}&quot;
                         </span>
-                        {r.time}
-                      </p>
-                      <p>
-                        <span className="text-[1.5rem] underline">
-                          lattitude:{" "}
-                        </span>
-                        {r.gps?.lat}
-                      </p>
-                      <p>
-                        <span className="text-[1.5rem] underline">
-                          longitude:{" "}
-                        </span>
-                        {r.gps?.lng}
-                      </p>
-                      <Link href={`/resources/${r.key}`}>
-                        <Image
-                          src={r.url}
-                          alt={r.key}
-                          width={300}
-                          height={200}
+                        <Checkbox
+                          className={`w-6 h-6 rounded-full bg-white shadow ${
+                            isChecked ? "border-blue-500" : "border-zinc-200"
+                          }`}
+                          id={r.key}
+                          onCheckedChange={handleOnSelectResource}
+                          checked={isChecked}
                         />
-                      </Link>
+                      </label>
+                      <div key={r.key}>
+                        <h2>{r.title}</h2>
+                        <p>
+                          {!r.time
+                            ? "no timestamp"
+                            : `Date 日期: ${format(
+                                new Date(`${r.time}`),
+                                "yyyy/MM/dd"
+                              )}`}
+                        </p>
+                        <Link href={`/resources/${r.key}`}>
+                          <Image
+                            src={r.url}
+                            alt={r.key}
+                            width={300}
+                            height={200}
+                          />
+                        </Link>
 
-                      <a
-                        href={`https://www.google.com/maps/search/?api=1&query=${r.gps?.lat},${r.gps?.lng}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 underline"
-                      >
-                        Google Map Location
-                      </a>
-                      <br />
-                      <button
-                        className="text-[1.3] text-blue-700"
-                        onClick={() => {
-                          if (r.gps == null) {
-                            return;
-                          }
-                          toggleMarker(r);
-                        }}
-                      >
-                        Toggle Map Marker
-                      </button>
-                      {selected.length === 1 && selected[0] === r.key && (
-                        <PatchForm
-                          fileKey={selected[0]}
-                          initialNote={
-                            data?.find((r) => r.key === selected[0])?.note
-                          }
-                          initialTitle={
-                            data?.find((r) => r.key === selected[0])?.title
-                          }
-                          onSuccess={(updated) => {
-                            console.log("File updated:", updated);
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${r.gps?.lat},${r.gps?.lng}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline"
+                        >
+                          Google Map Location
+                        </a>
+                        <br />
+                        <button
+                          className="text-[1.3] text-blue-700"
+                          onClick={() => {
+                            if (r.gps == null) {
+                              return;
+                            }
+                            toggleMarker(r);
                           }}
-                        />
-                      )}
-                      <br />
-                      <br />
+                        >
+                          Toggle Map Marker
+                        </button>
+                        {selected.length === 1 && selected[0] === r.key && (
+                          <PatchForm
+                            fileKey={selected[0]}
+                            initialNote={
+                              data?.find((r) => r.key === selected[0])?.note
+                            }
+                            initialTitle={
+                              data?.find((r) => r.key === selected[0])?.title
+                            }
+                            onSuccess={(updated) => {
+                              console.log("File updated:", updated);
+                            }}
+                          />
+                        )}
+                        <br />
+                        <br />
+                      </div>
                     </div>
-                  </div>
-                </li>
-              );
-            })}
+                  </li>
+                );
+              })}
           </ul>
         )}
 

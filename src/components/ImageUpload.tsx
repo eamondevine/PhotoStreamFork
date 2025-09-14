@@ -9,7 +9,7 @@ export default function ImageUpload() {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
-    if (!selectedFiles || selectedFiles.length === 0) return;
+    if (!selectedFiles?.length) return;
 
     const formData = new FormData();
     Array.from(selectedFiles).forEach((file) => formData.append("files", file));
@@ -23,12 +23,18 @@ export default function ImageUpload() {
       });
       const dataRes = await res.json();
 
-      if (!res.ok || !dataRes?.data) {
+      if (!res.ok || !dataRes?.results) {
         console.error("Upload failed:", dataRes?.error);
         return;
       }
 
-      // Invalidate query to refresh gallery
+      // Optimistic update
+      queryClient.setQueryData(["resources"], (oldData: any) => [
+        ...(oldData || []),
+        ...dataRes.results.filter((r: any) => r.success).map((r: any) => r.doc),
+      ]);
+
+      // Ensure the gallery shows the proper image URLs
       queryClient.invalidateQueries({ queryKey: ["resources"] });
     } catch (err: any) {
       console.error("Upload error:", err.message || err);

@@ -16,4 +16,3 @@ export function useResources() {
     staleTime: 43200000, //half day?
   });
 }
-// I think I need an invalidate query or something to make imageupload immediate
