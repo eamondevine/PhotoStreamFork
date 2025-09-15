@@ -11,7 +11,7 @@ const Nav = () => {
             <div>Hi</div>
           </Link>
         </p>
-        <ul className="fixed right-5 top-2 justify-end gap-6 m-0">
+        <ul className="absolute right-5 top-2 justify-end gap-6 m-0">
           <ImageUpload />
         </ul>
       </Container>
