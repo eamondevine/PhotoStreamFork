@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  S3Client,
-  DeleteObjectCommand,
-  DeleteObjectsCommand,
-} from "@aws-sdk/client-s3";
+import { S3Client, DeleteObjectsCommand } from "@aws-sdk/client-s3";
 import dbConnect from "@/lib/dbconnect";
 import TestModel from "@/app/models/TestSchema";
 
@@ -25,34 +21,26 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "No keys provided" }, { status: 400 });
     }
 
-    if (keys.length === 1) {
-      // Single delete
-      try {
-        await s3Client.send(
-          new DeleteObjectCommand({
-            Bucket: process.env.S3_BUCKET_NAME!,
-            Key: keys[0],
-          })
-        );
-      } catch (err) {
-        console.error(`Error deleting ${keys[0]} from S3:`, err);
-      }
-    } else {
-      // Multi-delete
-      try {
-        await s3Client.send(
-          new DeleteObjectsCommand({
-            Bucket: process.env.S3_BUCKET_NAME!,
-            Delete: {
-              Objects: keys.map((key) => ({ Key: key })),
-              // Quiet: false to return details for each key
-              Quiet: false,
-            },
-          })
-        );
-      } catch (err) {
-        console.error("Error deleting multiple keys from S3:", err);
-      }
+    console.log("Deleting from bucket:", "eamon-test-bucket-1");
+    console.log("Keys to delete:", keys);
+
+    try {
+      const s3Response = await s3Client.send(
+        new DeleteObjectsCommand({
+          Bucket: "eamon-test-bucket-1",
+          Delete: {
+            Objects: keys.map((key) => ({ Key: key })), // use keys as-is
+            Quiet: false,
+          },
+        })
+      );
+      console.log("S3 delete response:", s3Response);
+    } catch (s3Err) {
+      console.error("Error deleting from S3:", s3Err);
+      return NextResponse.json(
+        { error: "Failed to delete from S3" },
+        { status: 500 }
+      );
     }
 
     // Delete from MongoDB

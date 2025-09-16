@@ -47,10 +47,16 @@ const MediaViewer = ({ resource }: { resource: Resource }) => {
             {resource.title ?? "no title"}
           </li>
           <li className="text-white text-[1.2rem]">
-            Date 日期: {format(new Date(`${resource.time}`), "yyyy/MM/dd")}
+            Date 日期:{" "}
+            {resource.time
+              ? format(new Date(`${resource.time}`), "yyyy/MM/dd")
+              : "no time found :("}
           </li>
           <li className="text-white text-[1.1rem]">
-            Time 時間: {format(new Date(`${resource.time}`), "p")}
+            Time 時間:{" "}
+            {resource.time
+              ? format(new Date(`${resource.time}`), "p")
+              : "so sad"}
           </li>
           <li className="border p-2 rounded-md border-grey-300 mt-2 text-white text-[1.1rem]">
             {resource.note ?? "no note"}
