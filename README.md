@@ -1,4 +1,4 @@
-# Photo Stream _Fork_ 
+# Photo Stream _Fork_ Opitimized for Vercel Hosting
 <sup> This is a cloned Repo originally for a <a href="https://github.com/colbyfayock/demo-photo-library-starter" target="_blank" rel="noopener noreferrer">Photo Stream App using Cloudinary</a> as the photo storage repository. It was created for a FreeCodeCamp tutorial by Colby Faycock</sup><br/>  
 
 This is a forked version of the photo album (aka photo stream) web application that I created for my girlfriend and I. Instead of using Cloudinary, I am storing photos in an S3 bucket (currently with AWS, but in the future Cloudflare).<br/>  
